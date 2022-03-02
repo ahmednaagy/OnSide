@@ -24,7 +24,7 @@ struct Result: Codable{
     var strTime:String?
     
     var strVenue:String? // Match staduim
-    var strThumb:String? // Event logo
+    var strThumb:URL? // Event logo
     var strVideo:String? // Youtube Video
     var strStatus:String? //Finished or not
  

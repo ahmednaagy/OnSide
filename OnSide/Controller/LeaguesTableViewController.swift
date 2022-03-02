@@ -17,6 +17,12 @@ class LeaguesTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.center = CGPoint(x: self.view.bounds.width / 2, y: 300)
+        indicator.color = .green
+        self.view.addSubview(indicator)
+        indicator.startAnimating()
+        
         SportsAPI.requestLeagues(sport: sport!) { myLeagues, error in
             guard let myLeagues = myLeagues else {
                 return
@@ -24,11 +30,13 @@ class LeaguesTableViewController: UITableViewController {
             self.leagues = myLeagues
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                indicator.stopAnimating()
             }
         }
         
         title = sport
         
+        self.navigationController?.navigationBar.prefersLargeTitles = false
         
     }
     
@@ -137,6 +145,10 @@ class LeaguesTableViewController: UITableViewController {
 extension LeaguesTableViewController: MyLeagueTableViewCellDelegate {
     
     func didTapBuuton(with youtubeURL: String) {
+        if youtubeURL.isEmpty {
+            InvalidUrlAlert()
+            return
+        }
         guard let url = URL(string: "https://\(youtubeURL)") else {
                 return
             }

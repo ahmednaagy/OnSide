@@ -70,8 +70,8 @@ extension AllSportsViewController: UICollectionViewDataSource {
 
 extension AllSportsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = (collectionView.frame.width * 0.45)
-        return CGSize(width: size, height: size + 110)
+        let size = (collectionView.frame.width * 0.26)
+        return CGSize(width: size, height: size + 30)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: cellPadding, left: 10, bottom: cellPadding, right: 10)

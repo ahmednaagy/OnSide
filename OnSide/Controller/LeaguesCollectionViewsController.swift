@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import CoreData
 
 class LeaguesCollectionViewsController: UITableViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-  
     
-
+    
+    
     @IBOutlet weak var upcomingCollectionView: UICollectionView!
     @IBOutlet weak var resultsCollectionView: UICollectionView!
     @IBOutlet weak var teamsCollectionView: UICollectionView!
@@ -20,9 +21,24 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
     var results = [Result]()
     var teams = [Team]()
     
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        title = league.strLeague!
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addToFavorite))
+        
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.center = CGPoint(x: self.view.bounds.width / 2, y: 300)
+        indicator.color = .green
+        self.view.addSubview(indicator)
+        indicator.startAnimating()
+        
+        
         self.upcomingCollectionView.delegate = self
         self.upcomingCollectionView.dataSource = self
         
@@ -46,28 +62,54 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
             guard let leagueUpcomingEvents = leagueUpcomingEvents else {
                 return
             }
-            
             self.upcomingevents = leagueUpcomingEvents
             print(self.upcomingevents)
             DispatchQueue.main.async {
                 self.upcomingCollectionView.reloadData()
+                indicator.stopAnimating()
+            }
+        }
+        
+        SportsAPI.requestResults(id: league.idLeague ?? "4617") { leagueResult, error in
+            
+            guard let leagueResult = leagueResult else {
+                return
             }
             
+            self.results = leagueResult
+            DispatchQueue.main.async {
+                self.resultsCollectionView.reloadData()
+                indicator.stopAnimating()
+            }
         }
+        
+        SportsAPI.requestTeams(league: league.strLeague ?? "English Premier League") { leagueTeams, error in
+            
+            guard let leagueTeams = leagueTeams else {
+                return
+            }
+            
+            self.teams = leagueTeams
+            DispatchQueue.main.async {
+                self.teamsCollectionView.reloadData()
+                indicator.stopAnimating()
+            }
+        }
+        
     }
-
+    
     // MARK: - Table view data source
-
-
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case upcomingCollectionView:
             print(upcomingevents.count)
             return upcomingevents.count
         case resultsCollectionView:
-            return 20
+            return results.count
         case teamsCollectionView:
-            return 20
+            return teams.count
         default:
             return 1
         }
@@ -84,14 +126,16 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
             
         case resultsCollectionView:
             
-            let cell = resultsCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.resultCollectionViewCell, for: indexPath)
+            let cell = resultsCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.resultCollectionViewCell, for: indexPath) as! ResultsCollectionViewCell
             cell.contentView.layer.cornerRadius = 20
+            cell.configure(with: results[indexPath.row])
             return cell
             
         case teamsCollectionView:
             
-            let cell = teamsCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.teamsCollectionViewCell, for: indexPath)
+            let cell = teamsCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.teamsCollectionViewCell, for: indexPath) as! TeamsCollectionViewCell
             cell.contentView.layer.cornerRadius = 20
+            cell.configure(with: teams[indexPath.row])
             return cell
             
         default:
@@ -109,8 +153,18 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
             return CGSize(width: teamsCollectionView.bounds.size.width - 35, height: 130)
         default:
             return CGSize(width: view.bounds.size.width, height: 50)
-
+            
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let TeamDetailsViewController = storyboard?.instantiateViewController(withIdentifier: Constants.TeamDetailsViewController) as! TeamDetailsViewController
+        TeamDetailsViewController.team = teams[indexPath.row]
+        if collectionView == teamsCollectionView {
+            self.navigationController?.pushViewController(TeamDetailsViewController, animated: true)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -123,9 +177,37 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
             return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 10)
         default:
             return UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 10)
-
+            
         }
     }
     
+    @objc func addToFavorite() {
+        save()
+    }
+    
+    func save() {
+        
+        
+        let favoriteLeague = FavouriteLeague(context: context)
+        favoriteLeague.leagueName = league.strLeague
+        favoriteLeague.leagueBadge = league.strBadge
+        favoriteLeague.youtube = league.strYoutube
+        
+        do {
+            try context.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
 
+    func retrieveSavedMovies() {
+        
+    }
+    
+    
+    
+    
+    
 }

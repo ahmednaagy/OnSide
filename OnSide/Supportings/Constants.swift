@@ -12,6 +12,7 @@ class Constants {
     // Storyboard IDS
     static let LeaguesTableViewControllerIdentifier = "LeaguesTableViewController"
     static let LeaguesCollectionViewsController = "LeaguesCollectionViewsController"
+    static let TeamDetailsViewController = "TeamDetailsViewController"
     
     // Identifiers
     static let sportsCellIdentifier = "sportsCell"

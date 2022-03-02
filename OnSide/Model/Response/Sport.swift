@@ -11,7 +11,7 @@ import Foundation
 struct Sport: Codable {
     
     var strSport: String
-    var strSportThumb: URL
+    var strSportIconGreen: URL
 //
 //    enum CodingKeys: String, CodingKey {
 //        case sportName = "strSport"

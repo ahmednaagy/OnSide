@@ -13,17 +13,18 @@ struct Team: Codable{
     var strTeam:String?
     
     var strStadium:String?
-    var strStadiumThumb:String? // staduim photo
+    var strStadiumThumb:URL? // staduim photo
     
     var strWebsite:String?
     var strFacebook:String?
     var strTwitter:String?
     var strInstagram:String?
     var strYoutube:String?
+    var strDescriptionEN: String?
     
-    var strTeamBadge:String? //Logo
-    var strTeamLogo:String? //Title logo
-    var strTeamJersey:String?
-    var strTeamBanner:String?
+    var strTeamBadge:URL? //Logo
+    var strTeamLogo:URL? //Title logo
+    var strTeamJersey:URL?
+    var strTeamBanner:URL?
 
 }
