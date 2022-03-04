@@ -20,6 +20,7 @@ struct UpcomingEvent: Codable {
 
     var dateEvent:String?
     var strTime:String?
+    var strTimestamp: String?
 
     var strVenue:String? // Match staduim
     var strThumb:URL? // Event logo

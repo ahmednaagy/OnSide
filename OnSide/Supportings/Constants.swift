@@ -17,9 +17,14 @@ class Constants {
     // Identifiers
     static let sportsCellIdentifier = "sportsCell"
     static let leaguesCellIdentifier = "leaguesCell"
+    static let favoriteleaguesCellIdentifier = "favoriteLeagueCell"
+
     
     // CollectionViews Cell Indetifiers
     static let upcomingCollectionViewCell = "upcomingCollectionViewCell"
     static let resultCollectionViewCell = "resultCollectionViewCell"
     static let teamsCollectionViewCell = "teamsCollectionViewCell"
+    
+    // COREDATA Entity Name
+    static let FavouriteLeagueEntity = "FavouriteLeague"
 }

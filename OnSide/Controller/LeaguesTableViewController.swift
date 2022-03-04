@@ -69,18 +69,6 @@ class LeaguesTableViewController: UITableViewController {
     }
     
     
-//    func configure(cell: UITableViewCell, with league: League) {
-//        let cellLabel = tableView.viewWithTag(2) as! UILabel
-//        let cellImage = tableView.viewWithTag(1) as! UIImageView
-//
-//        if let data = NSData(contentsOf: league.strBadge) {
-//            cellImage.image = UIImage(data: data as Data)
-//        } else {
-//            cellImage.image = UIImage(named: "placeholder")
-//        }
-//        cellLabel.text = league.strLeagueAlternate
-//    }
-    
     
     /*
      // Override to support conditional editing of the table view.

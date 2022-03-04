@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="FavouriteLeague" representedClassName="FavouriteLeague" syncable="YES" codeGenerationType="class">
-        <attribute name="leagueBadge" optional="YES" attributeType="URI"/>
-        <attribute name="leagueName" optional="YES" attributeType="String"/>
-        <attribute name="youtube" optional="YES" attributeType="String"/>
+        <attribute name="idLeague" optional="YES" attributeType="String"/>
+        <attribute name="strBadge" optional="YES" attributeType="URI"/>
+        <attribute name="strDescriptionEN" optional="YES" attributeType="String"/>
+        <attribute name="strLeague" optional="YES" attributeType="String"/>
+        <attribute name="strPoster" optional="YES" attributeType="String"/>
+        <attribute name="strYoutube" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="FavouriteLeague" positionX="-63" positionY="-18" width="128" height="74"/>
+        <element name="FavouriteLeague" positionX="-63" positionY="-18" width="128" height="119"/>
     </elements>
 </model>

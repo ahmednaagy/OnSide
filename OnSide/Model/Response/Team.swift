@@ -9,6 +9,7 @@ import Foundation
 
 struct Team: Codable{
     
+    
     var idTeam:String?
     var strTeam:String?
     

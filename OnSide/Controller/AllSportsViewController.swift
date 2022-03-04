@@ -41,6 +41,16 @@ class AllSportsViewController: UIViewController, UICollectionViewDelegate {
             }
             print(self.sports)
         }
+        
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+            if granted {
+                print("Yay!")
+            } else {
+                print("D'oh")
+            }
+        }
     }
     
     //MARK: - UICollectionViewDelegate Methods
@@ -49,6 +59,21 @@ class AllSportsViewController: UIViewController, UICollectionViewDelegate {
         leagesVC.sport = sports[indexPath.row].strSport
         self.navigationController?.pushViewController(leagesVC, animated: true)
     }
+    
+    // MARK: - Helping Methods
+    
+//    func handleRandomImageResponse(imageData: DogImage?, error: Error?) {
+//        guard let imageURL = URL(string: imageData?.message ?? "") else {
+//            return
+//        }
+//        DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:error:))
+//    }
+//
+//    func handleImageFileResponse(image: UIImage?, error: Error?) {
+//        DispatchQueue.main.async {
+//            self.imageView.image = image
+//        }
+//    }
     
 }
 

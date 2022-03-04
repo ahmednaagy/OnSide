@@ -20,10 +20,13 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
     var upcomingevents = [UpcomingEvent]()
     var results = [Result]()
     var teams = [Team]()
+    var fetchedLeague = [FavouriteLeague]()
+    
+    var notificationButton: UIBarButtonItem!
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +34,9 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
         self.navigationController?.navigationBar.prefersLargeTitles = false
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addToFavorite))
+        notificationButton = UIBarButtonItem(image: UIImage(systemName: "suit.heart"), style: .plain, target: self, action: #selector(notifyMe))
+        //        let barbutton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(notifyMe))
+        self.navigationItem.rightBarButtonItems?.append(notificationButton)
         
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.center = CGPoint(x: self.view.bounds.width / 2, y: 300)
@@ -181,6 +187,47 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
         }
     }
     
+    @objc func notifyMe() {
+        
+        // Gets you half way there //
+        UIView.animate(withDuration: 0.05, delay: 0.0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+            self.notificationButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
+            self.notificationButton.image = UIImage(systemName: "heart.fill")
+        }, completion: nil)
+        
+        // Rotates all the way around //
+        UIView.animate(withDuration: 0.5, delay: 0.5, options: UIView.AnimationOptions.curveEaseIn, animations: {
+            self.notificationButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi * 2))
+            self.notificationButton.image = UIImage(systemName: "heart.fill")
+            
+        }, completion: nil)
+        
+        let center = UNUserNotificationCenter.current()
+        let content = UNMutableNotificationContent()
+        content.title = "Match Call! 🔔"
+        content.subtitle = "You favorite leage is starting 🎉"
+        content.categoryIdentifier = "alarm"
+        content.userInfo = ["customData": "fizzbuzz"]
+        content.sound = UNNotificationSound.default
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let date = dateFormatter.date(from: (upcomingevents.first?.strTimestamp!)!)
+        
+        
+        let calendar = Calendar.current
+        
+        let components = calendar.dateComponents([.year, .month, .day, .hour], from: date!)
+        
+                let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        center.add(request, withCompletionHandler: nil)
+        
+    }
+    
     @objc func addToFavorite() {
         save()
     }
@@ -188,25 +235,54 @@ class LeaguesCollectionViewsController: UITableViewController, UICollectionViewD
     func save() {
         
         
-        let favoriteLeague = FavouriteLeague(context: context)
-        favoriteLeague.leagueName = league.strLeague
-        favoriteLeague.leagueBadge = league.strBadge
-        favoriteLeague.youtube = league.strYoutube
         
-        do {
-            try context.save()
-        } catch {
-            print(error.localizedDescription)
+        let favoriteLeagues = FavouriteLeague(context: context)
+        favoriteLeagues.idLeague = self.league.idLeague
+        favoriteLeagues.strLeague = self.league.strLeague
+        favoriteLeagues.strBadge = self.league.strBadge
+        favoriteLeagues.strYoutube = self.league.strYoutube
+        favoriteLeagues.strPoster = self.league.strPoster
+        favoriteLeagues.strDescriptionEN = self.league.strDescriptionEN
+        
+        if let tabItems = tabBarController?.tabBar.items {
+            // In this case we want to modify the badge number of the third tab:
+            let tabItem = tabItems[1]
+            tabItem.badgeValue = String(fetchedLeague.count + 1)
         }
         
-    }
-    
-
-    func retrieveSavedMovies() {
+        try? context.save()
         
     }
     
     
+    func checkIfItemExist(league: League) -> Bool {
+        
+        //        let managedContext = CoreDataStack.sharedInstance.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FavouriteLeague")
+        fetchRequest.fetchLimit =  1
+        fetchRequest.predicate = NSPredicate(format: "idLeague == %@" ,league.idLeague!)
+        
+        do {
+            let count = try context.count(for: fetchRequest)
+            if count > 0 {
+                return true
+            }else {
+                return false
+            }
+        }catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+            return false
+        }
+    }
+    
+    func fetchLeagues() -> [FavouriteLeague]? {
+        do {
+            return try context.fetch(FavouriteLeague.fetchRequest())
+        } catch {
+            print("fetching error")
+            return nil
+        }
+    }
     
     
     
